@@ -1,0 +1,9 @@
+body{
+    width: 100%;
+}
+.headerUl{
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    gap: 1vh;
+}
