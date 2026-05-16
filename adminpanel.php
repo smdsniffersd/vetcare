@@ -25,12 +25,17 @@ if ($role_id['role_id'] === 1) {
 
     <header>
         <ul class="headerUl">
-            <li>users</li>
-            <li>personal</li>
-            <li>logs</li>
+            <li onclick="getInfo(this)">users</li>
+            <li onclick="getInfo(this)">personal</li>
+            <li onclick="getInfo(this)">appointments</li>
+            <li onclick="getInfo(this)">pets</li>
+            <li onclick="getInfo(this)">logs</li>
+            
         </ul>
     </header>
-<script src="/scripts/admin.js"></script>
+    <table class="mainOverlay" id="mainOverlay">
+    </table>
+<script src="./scripts/admin.js"></script>
 </body>
 
 </html>
