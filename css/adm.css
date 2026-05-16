@@ -1,9 +1,40 @@
-body{
+body {
     width: 100%;
+    margin: 0;
+    background-color: #f7e7ce;
 }
-.headerUl{
+
+.headerUl {
     list-style: none;
     display: flex;
     flex-direction: row;
     gap: 1vh;
+
+    padding: 2vh;
+    margin-left: 5vh;
+}
+
+header {
+    background-color: #1f3d36;
+}
+
+.headerUl>li:hover {
+    cursor: pointer;
+}
+
+.mainOverlay {
+    display: none;
+    width: fit-content;
+    height: auto;
+    margin: auto;
+    border: 1px solid black;
+
+}
+
+tr,
+td,
+th {
+    padding: 0.5vh;
+    border: 1px solid black;
+    text-align: center;
 }
