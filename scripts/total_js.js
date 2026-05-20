@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     return response.text();
                 })
                 .then(text => {
-                    console.log('Ответ сервера (текст):', text);
+                    console.log('Ответ сервера:', text);
                     try {
                         const data = JSON.parse(text);
                         console.log('Ответ сервера (JSON):', data);
@@ -428,10 +428,10 @@ function checkNotifications(thiselem) {
     if (rotate === 0) {
         elem.style.display = 'flex';
         elem.style.transform = 'translateY(0)';
-        elem.style.opacity ='1'; 
+        elem.style.opacity = '1';
 
         rotate += 360;
-    }else{
+    } else {
         elem.style.display = 'none';
 
         rotate -= 360;
@@ -443,3 +443,63 @@ const notification = document.getElementById('notification');
 notification.style.position = 'fixed';
 notification.style.bottom = '10%';
 notification.style.right = '1%';
+
+
+function getInfoPet(elem) {
+    const personSpansDiv = document.getElementById('personSpansDiv');
+    if (!personSpansDiv) {
+        console.error('Element personSpansDiv not found');
+        return;
+    }
+    personSpansDiv.style.display = 'flex';
+
+    fetch('./user_account.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ data: elem.dataset.petId, action: 'getInfoPet' })
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Response:', data);
+
+            if (data.success) {
+                const petHaventInfo = document.getElementById('petHaventInfo');
+                const petLasvisit = document.getElementById('petLasvisit');
+                const petVaccinations = document.getElementById('petVaccinations');
+                const petTratments = document.getElementById('petTratments');
+                const petTestResults = document.getElementById('petTestResults');
+                const petPrescribed = document.getElementById('petPrescribed');
+                if (!petLasvisit || !petVaccinations || !petTratments || !petTestResults || !petPrescribed || !personSpansDiv || !petHaventInfo) {
+                    console.log('Can`t search element`s in DOOM')
+                    return;
+                }
+                personSpansDiv.style.display = 'flex';
+                petHaventInfo.style.display = 'none';
+                petLasvisit.textContent = `Las visit: ${data.data['last_visit']}`;
+                petVaccinations.textContent = `Vaccinations: ${data.data['vaccinations']}`;
+                petVaccinationPreparations.textContent = `Vaccination preparations: ${data.data['vaccination_preparations']}`;
+                petTratments.textContent = `Parasite treatments: ${data.data['parasite_treatments']}`;
+                petTestResults.textContent = `Tests and results: ${data.data['tests_and_results']}`;
+            } else {
+                if (!data.data || data.data === null) {
+                    personSpansDiv.style.display = 'none';
+                    petHaventInfo.style.display = 'block';
+                    petHaventInfo.textContent = 'Pet haven`t Information';
+                    
+
+                } else {
+                    console.error('Error:', data.message);
+                }
+
+            }
+        })
+        .catch(error => console.error('Fetch error:', error));
+}
