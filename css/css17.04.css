@@ -82,7 +82,8 @@ a:active {
     text-align: center;
     padding: 1%;
 }
-.loginBtnText{
+
+.loginBtnText {
     width: fit-content;
 }
 
@@ -1865,7 +1866,7 @@ h3 {
     margin-top: 1vh;
 }
 
-.logoutbutton{
+.logoutbutton {
     display: flex;
     align-items: center;
     background-color: rgb(204, 54, 43);
@@ -1875,26 +1876,57 @@ h3 {
     border-radius: 18px;
 
 }
-.headerButtons{
+
+.headerButtons {
     display: flex;
     flex-direction: row;
     gap: 1vh;
 }
-.header-main{
+
+.header-main {
     margin-bottom: 1vh;
 }
 
+.Nopets,
+.PetsName {
+    font-size: 18px;
 
+    margin: auto;
+    display: block;
+    width: fit-content;
 
+    margin-top: 2vh;
+}
 
+.PetsName {
+    padding: 1vh;
+    width: 80%;
+    border-radius: 18px;
+    background-color: #fcdeb5;
+    text-align: center;
+}
 
+.PetsName:hover {
+    cursor: pointer;
+}
 
+.header-info-span {
+    text-align: center;
+}
 
+.info-of-pet {
+    height: fit-content;
+}
 
+#personSpansDiv {
+    display: none;
+    flex-direction: column;
+}
 
-
-
-
+.person-spans-div {
+    display: flex;
+    flex-direction: column;
+}
 
 @media (max-width: 768px) {
 
