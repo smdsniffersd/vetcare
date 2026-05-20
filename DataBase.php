@@ -52,9 +52,30 @@ class DataBase
         $insert->execute($data);
         return $this->lastInsertId();
     }
+
+    public function deleteOnValue($table, $column, $value)
+    {
+        try {
+            $sql = $this->pdo->prepare("DELETE FROM `$table` WHERE `$column` = :value");
+            $sql->execute([':value' => $value]);
+
+            if ($sql->rowCount() > 0) {
+                return ['success' => true, 'deleted' => $sql->rowCount()];
+            } else {
+                return ['success' => false, 'message' => 'Запись не найдена'];
+            }
+        } catch (PDOException $e) {
+            return ['success' => false, 'message' => 'Ошибка: ' . $e->getMessage()];
+        }
+    }
+
     public function lastInsertId()
     {
         return $this->pdo->lastInsertId();
+    }
+    public static function deletes($table, $column, $value)
+    {
+        return self::getInstance()->deleteOnValue($table, $column, $value);
     }
     public static function OneFetch($sql, $params = [])
     {
