@@ -68,7 +68,31 @@ class DataBase
             return ['success' => false, 'message' => 'Ошибка: ' . $e->getMessage()];
         }
     }
+    public function update($table, $data, $where, $whereValue)
+    {
 
+        $setParts = [];
+        foreach (array_keys($data) as $column) {
+            $setParts[] = "`$column` = :$column";
+        }
+        $setClause = implode(', ', $setParts);
+
+
+        $sql = "UPDATE `$table` SET $setClause WHERE `$where` = :where_value";
+
+
+        $data['where_value'] = $whereValue;
+
+
+        $stmt = $this->pdo->prepare($sql);
+        $result = $stmt->execute($data);
+
+        if ($result) {
+            return ['success' => true, 'message' => 'Запись обновлена'];
+        } else {
+            return ['success' => false, 'message' => 'Ошибка обновления'];
+        }
+    }
     public function lastInsertId()
     {
         return $this->pdo->lastInsertId();
@@ -96,5 +120,9 @@ class DataBase
     public static function lastId()
     {
         return self::getInstance()->lastInsertId();
+    }
+    public static function updateRow($table, $data, $where, $whereValue)
+    {
+        return self::getInstance()->update($table, $data, $where, $whereValue);
     }
 }

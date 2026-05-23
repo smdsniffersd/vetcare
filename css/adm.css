@@ -44,21 +44,29 @@ th {
     padding: 0.5vh;
     text-align: center;
 }
-table{
+
+table {
     border-collapse: collapse;
     border-spacing: 0;
 }
-td, th {
+
+td,
+th {
     border-right: 1px solid rgba(21, 21, 21, 0.1);
 }
-tr{
+
+tr {
     border-bottom: 1px solid rgba(21, 21, 21, 0.1);
     border-top: 1px solid rgba(21, 21, 21, 0.1);
 }
 
-td:last-child, th:last-child, tr:last-child, tr:first-child {
+td:last-child,
+th:last-child,
+tr:last-child,
+tr:first-child {
     border: none;
 }
+
 .overlayGetInfoPetsSpan {
     display: block;
     margin-bottom: 5px;
@@ -87,7 +95,7 @@ td:last-child, th:last-child, tr:last-child, tr:first-child {
     display: none;
 }
 
-.overlayGetInfoPetsAddPetOverlay{
+.overlayGetInfoPetsAddPetOverlay {
     display: none;
     padding: 1vh;
     background-color: #1f3d36;
@@ -99,6 +107,7 @@ td:last-child, th:last-child, tr:last-child, tr:first-child {
     position: fixed;
     border-radius: 18px;
 }
+
 .overlayGetInfoPetsX,
 .overlayGetInfoPetsNewAddPet {
     position: absolute;
@@ -110,49 +119,58 @@ td:last-child, th:last-child, tr:last-child, tr:first-child {
 .overlayGetInfoPetsNewAddPet {
     right: 12%;
 }
-.overlayGetInfoPetsMessage{
+
+.overlayGetInfoPetsMessage {
     font-size: 18px;
     text-align: center;
 }
+
 .AddPetOverlaySpan,
-.OverlaySubmitButton{
+.OverlaySubmitButton {
     display: block;
     width: fit-content;
     margin: auto;
 }
-.AddPetOverlaySpan{
+
+.AddPetOverlaySpan {
     font-size: 18px;
     color: white;
     font-weight: 500;
 }
-.inputDiv{
+
+.inputDiv {
     display: flex;
     flex-direction: row;
     gap: 5vh;
 }
-.inputDivBlock{
+
+.inputDivBlock {
     display: flex;
     flex-direction: column;
 }
+
 .inputLabelAddPet,
-.inputAddPet{
+.inputAddPet {
     display: block;
     border-radius: 18px;
     border: none;
     padding: 1vh;
 }
+
 .OverlaySubmitButton,
 .inputAddPet,
-.inputLabelAddPet{
+.inputLabelAddPet {
     margin-top: 1vh;
 }
-.OverlaySubmitButton{
+
+.OverlaySubmitButton {
     margin-top: 2vh;
     border: none;
     padding: 1vh 4vh;
     border-radius: 18px;
 }
-.overlaySuccessAddPet{
+
+.overlaySuccessAddPet {
     position: fixed;
     background-color: aliceblue;
     width: fit-content;
@@ -164,7 +182,8 @@ td:last-child, th:last-child, tr:last-child, tr:first-child {
     border-radius: 18px;
     display: none;
 }
-.overlayDeleteUser{
+
+.overlayDeleteUser {
     display: none;
     background-color: #1f3d36;
     color: aliceblue;
@@ -178,21 +197,41 @@ td:last-child, th:last-child, tr:last-child, tr:first-child {
     left: 43%;
     border-radius: 12px;
 }
-.overlayDeleteUserDiv{
+
+.overlayDeleteUserDiv {
     display: flex;
     flex-direction: row;
     gap: 10vh;
     justify-content: center;
     margin-top: 2.5vh;
 }
-.overlayDeleteUserSpan{
+
+.overlayDeleteUserSpan {
     display: block;
     width: fit-content;
     margin: auto;
 }
-.overlayDeleteUserAnswer{
+
+.overlayDeleteUserAnswer {
     border-radius: 1px solid rgba(21, 21, 21, 0.1);
 }
-.overlayDeleteUserAnswer:hover{
+
+.overlayDeleteUserAnswer:hover {
     cursor: pointer;
+}
+
+.editModal {
+    display: block;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: aliceblue;
+    padding: 2vh;
+    border-radius: 16px;
+}
+
+.editUserForm {
+    display: flex;
+    flex-direction: column;
 }

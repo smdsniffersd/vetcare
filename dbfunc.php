@@ -20,6 +20,10 @@ function InsertRow($table, $data = []) {
 function LastId() {
     return DataBase::lastId();
 }
-function delete($table, $column, $value){
+function deleteRow($table, $column, $value){
     return DataBase::deletes($table, $column, $value);
+}
+
+function update($table, $data, $where, $whereValue){
+    return DataBase::updateRow($table, $data, $where, $whereValue);
 }
