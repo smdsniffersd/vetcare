@@ -4,7 +4,7 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 require_once __DIR__ . '/../config.php';
-$allowtabled = ['users', 'logs', 'personal', 'appointments', 'pets'];
+$allowtabled = ['users', 'logs', 'personal', 'appointments', 'pets', 'medication_reminders'];
 $sql = [
     'users' => 'SELECT 
     u.id, 
@@ -18,18 +18,18 @@ $sql = [
     'logs' => 'select id, userID, event, time from logs',
     'personal' => 'select p.id, p.first_name, p.second_name, p.phone_number, p.email, pr.name as profession_name from personal p left join professions pr ON pr.id = p.profession_id',
     'appointments' =>
-    'select 
-    a.id, p.name as pet_name, per.first_name as Doctor_Name, per.second_name as Doctor_second_name, s.name as Service, u.firstName as name, u.secondName as last_name, a.status, a.date, a.time, a.time_at
-    from appointments a
-   
+    'select a.id, p.name as pet_name, per.first_name as Doctor_Name, per.second_name as Doctor_second_name, s.name as Service, u.firstName as name, u.secondName as last_name, a.status, a.date, a.time, a.time_at from appointments a
     left join users u ON u.id = a.user_id
     left join pets p ON u.id = p.owner_id
     left join services s ON a.service_id = s.id
     left join personal per ON a.doctor_id = per.id
     ORDER BY a.date DESC, a.time DESC',
-    'pets' => 'select p.id, p.name, p.view, p.Breed, p.Age, p.weight, p.special_marks, u.firstName as OwnerName, u.secondName as OwnerLastName from pets p left join users u ON p.owner_id = u.id
-'
+    'pets' => 'select p.id, p.name, p.view, p.Breed, p.Age, p.weight, p.special_marks, u.firstName as OwnerName, u.secondName as OwnerLastName from pets p left join users u ON p.owner_id = u.id',
+    'medication_reminders' => 'select mr.id, p.name as Pet_name, mr.scheduled_datetime, mr.is_taken, m.name as medicine from medication_reminders mr
+    left join medicines m ON mr.medicine_id = m.id
+    left join pets p ON mr.pet_id = p.id'
 ];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $input = json_decode(file_get_contents('php://input'), true);
