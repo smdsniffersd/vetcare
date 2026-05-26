@@ -169,18 +169,18 @@ document.addEventListener('DOMContentLoaded', function () {
             })
                 .then(response => {
                     console.log('Status:', response.status);
-                    return response.text();
+                    return response.json();
                 })
-                .then(text => {
-                    console.log('Ответ сервера:', text);
+                .then(data => {
+                    console.log('Ответ сервера:', data);
                     try {
-                        const data = JSON.parse(text);
-                        console.log('Ответ сервера (JSON):', data);
-                        if (data.success) {
-                            window.location.href = "user_account.php";
-                        } else {
-                            alert(data.message);
-                        }
+                            switch(Number(data['auth_role'])){
+                                case 1: window.location.href = "adminpanel.php";
+                                break;
+                                case 2: window.location.href = "doctorpanel.php";
+                                break;
+                                default: window.location.href = "user_account.php";
+                            }
                     } catch (e) {
                         console.error('Не удалось распарсить JSON:', e);
                         alert('Ошибка: сервер вернул не JSON. Смотрите консоль.');
@@ -439,10 +439,15 @@ function checkNotifications(thiselem) {
 
     thiselem.style.transform = `rotateX(${rotate}deg)`;
 }
-const notification = document.getElementById('notification');
-notification.style.position = 'fixed';
-notification.style.bottom = '10%';
-notification.style.right = '1%';
+try {
+    const notification = document.getElementById('notification');
+    notification.style.position = 'fixed';
+    notification.style.bottom = '10%';
+    notification.style.right = '1%';
+}catch(e){
+    console.log(e);
+}
+
 
 
 function getInfoPet(elem) {
@@ -493,7 +498,7 @@ function getInfoPet(elem) {
                     personSpansDiv.style.display = 'none';
                     petHaventInfo.style.display = 'block';
                     petHaventInfo.textContent = 'Pet haven`t Information';
-                    
+
 
                 } else {
                     console.error('Error:', data.message);

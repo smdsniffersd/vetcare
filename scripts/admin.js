@@ -57,7 +57,9 @@ function drawTable(data) {
 
 function getInfo(element) {
 
+    document.getElementById('addRowButton')?.remove();
     const table = element.textContent.trim();
+    const body = document.getElementById('adminbody');
     fetch('./php_components/adminlogic.php', {
         method: 'POST',
         body: JSON.stringify({ value: table, action: 'getUserInfo' }),
@@ -70,6 +72,9 @@ function getInfo(element) {
         return responce.json();
 
     }).then(data => {
+        html = '';
+        html = `<button onclick="addRow('${data['table_name']}')" id="addRowButton" class="addRowButton">➕ Добавить запись</button>`;
+        body.insertAdjacentHTML('beforeend', html);
         drawTable(data);
     }).catch(error => console.error('Fetch error', error));
 
@@ -294,20 +299,20 @@ function editRowHtml(tableName, cells, rowId) {
                     <label>ID:</label>
                     <input type="text" value="${rowId}" disabled>
                     
-                    <label>Имя:</label>
+                    <label>Name:</label>
                     <input type="text" name="firstName" value="${cells[1]?.textContent || ''}" required>
                     
-                    <label>Фамилия:</label>
+                    <label>Last name:</label>
                     <input type="text" name="secondName" value="${cells[2]?.textContent || ''}">
                     
                     <label>Email:</label>
                     <input type="email" name="email" value="${cells[3]?.textContent || ''}" required>
                     
-                    <label>Телефон:</label>
+                    <label>Phone:</label>
                     <input type="tel" name="phone" value="${cells[4]?.textContent || ''}">
                     
-                    <button type="submit">Сохранить</button>
-                    <button type="button" onclick="closeModal()">Отмена</button>
+                    <button type="submit">Save</button>
+                    <button type="button" onclick="closeModal()">Cancel</button>
                 </form>
             </div>
         `;
@@ -322,20 +327,23 @@ function editRowHtml(tableName, cells, rowId) {
                     <label>ID:</label>
                     <input type="text" value="${rowId}" disabled>
                     
-                    <label>Имя:</label>
+                    <label>Name:</label>
                     <input type="text" name="name" value="${cells[1]?.textContent || ''}" required>
+
+                    <label>Last name:</label>
+                    <input type="text" name="name" value="${cells[2]?.textContent || ''}" required>
                     
-                    <label>Должность:</label>
-                    <input type="text" name="position" value="${cells[2]?.textContent || ''}" required>
+                    <label>Profession:</label>
+                    <input type="text" name="position" value="${cells[5]?.textContent || ''}" required>
                     
-                    <label>Телефон:</label>
+                    <label>Phone:</label>
                     <input type="tel" name="phone" value="${cells[3]?.textContent || ''}">
                     
                     <label>Email:</label>
                     <input type="email" name="email" value="${cells[4]?.textContent || ''}">
                     
-                    <button type="submit">Сохранить</button>
-                    <button type="button" onclick="closeModal()">Отмена</button>
+                    <button type="submit">Save</button>
+                    <button type="button" onclick="closeModal()">Cancel</button>
                 </form>
             </div>
         `;
@@ -350,27 +358,27 @@ function editRowHtml(tableName, cells, rowId) {
                     <label>ID:</label>
                     <input type="text" value="${rowId}" disabled>
                     
-                    <label>Кличка:</label>
+                    <label>Name:</label>
                     <input type="text" name="name" value="${cells[1]?.textContent || ''}" required>
                     
-                    <label>Вид:</label>
+                    <label>View:</label>
                     <select name="type">
                         <option value="cat" ${cells[2]?.textContent === 'cat' ? 'selected' : ''}>Кошка</option>
                         <option value="dog" ${cells[2]?.textContent === 'dog' ? 'selected' : ''}>Собака</option>
                         <option value="other" ${cells[2]?.textContent === 'other' ? 'selected' : ''}>Другое</option>
                     </select>
                     
-                    <label>Порода:</label>
+                    <label>Breed:</label>
                     <input type="text" name="breed" value="${cells[3]?.textContent || ''}">
                     
-                    <label>Возраст:</label>
+                    <label>Age:</label>
                     <input type="number" name="age" value="${cells[4]?.textContent || ''}">
                     
-                    <label>ID владельца:</label>
+                    <label>Owner ID:</label>
                     <input type="number" name="owner_id" value="${cells[5]?.textContent || ''}" required>
                     
-                    <button type="submit">Сохранить</button>
-                    <button type="button" onclick="closeModal()">Отмена</button>
+                    <button type="submit">Save</button>
+                    <button type="button" onclick="closeModal()">Cancel</button>
                 </form>
             </div>
         `;
@@ -385,24 +393,24 @@ function editRowHtml(tableName, cells, rowId) {
                     <label>ID:</label>
                     <input type="text" value="${rowId}" disabled>
                     
-                    <label>Дата и время:</label>
+                    <label>Date and Time:</label>
                     <input type="datetime-local" name="appointment_date" value="${cells[1]?.textContent || ''}" required>
                     
-                    <label>ID питомца:</label>
+                    <label>ID pet:</label>
                     <input type="number" name="pet_id" value="${cells[2]?.textContent || ''}" required>
                     
-                    <label>ID врача:</label>
+                    <label>ID doctor:</label>
                     <input type="number" name="doctor_id" value="${cells[3]?.textContent || ''}" required>
                     
-                    <label>Статус:</label>
+                    <label>Status:</label>
                     <select name="status">
                         <option value="scheduled" ${cells[4]?.textContent === 'scheduled' ? 'selected' : ''}>Запланирован</option>
                         <option value="completed" ${cells[4]?.textContent === 'completed' ? 'selected' : ''}>Завершён</option>
                         <option value="cancelled" ${cells[4]?.textContent === 'cancelled' ? 'selected' : ''}>Отменён</option>
                     </select>
                     
-                    <button type="submit">Сохранить</button>
-                    <button type="button" onclick="closeModal()">Отмена</button>
+                    <button type="submit">Save</button>
+                    <button type="button" onclick="closeModal()">Cancel</button>
                 </form>
             </div>
         `;
@@ -414,8 +422,8 @@ function editRowHtml(tableName, cells, rowId) {
             <form id="editRowForm">
                 <label>ID:</label>
                 <input type="text" value="${rowId}" disabled>
-                <button type="submit">Сохранить</button>
-                <button type="button" onclick="closeModal()">Отмена</button>
+                <button type="submit">Save</button>
+                <button type="button" onclick="closeModal()">Cancel</button>
             </form>
         </div>
     `;
@@ -554,28 +562,28 @@ function addRowHtml(tableName) {
         return `
             <div class="modal-content">
                 <span class="close" onclick="closeModal()">&times;</span>
-                <h2>➕ Добавление пользователя</h2>
+                <h2>➕ Add user</h2>
                 <form id="addRowForm">
-                    <label>Имя:</label>
+                    <label>Name:</label>
                     <input type="text" name="firstName" required>
                     
-                    <label>Фамилия:</label>
+                    <label>Last name:</label>
                     <input type="text" name="secondName">
                     
                     <label>Email:</label>
                     <input type="email" name="email" required>
                     
-                    <label>Телефон:</label>
+                    <label>Phone:</label>
                     <input type="tel" name="phone">
                     
-                    <label>Пароль:</label>
+                    <label>Password:</label>
                     <input type="password" name="password" required>
                     
-                    <label>Роль (ID):</label>
+                    <label>Role (ID):</label>
                     <input type="number" name="role_id" value="3" required>
                     
-                    <button type="submit">Сохранить</button>
-                    <button type="button" onclick="closeModal()">Отмена</button>
+                    <button type="submit">Save</button>
+                    <button type="button" onclick="closeModal()">Cancel</button>
                 </form>
             </div>
         `;
@@ -585,25 +593,25 @@ function addRowHtml(tableName) {
         return `
             <div class="modal-content">
                 <span class="close" onclick="closeModal()">&times;</span>
-                <h2>➕ Добавление сотрудника</h2>
+                <h2>➕ Add personal</h2>
                 <form id="addRowForm">
-                    <label>Имя:</label>
+                    <label>Name:</label>
                     <input type="text" name="first_name" required>
                     
-                    <label>Фамилия:</label>
+                    <label>Last name:</label>
                     <input type="text" name="second_name" required>
                     
-                    <label>Телефон:</label>
+                    <label>Phone:</label>
                     <input type="tel" name="phone_number">
                     
                     <label>Email:</label>
                     <input type="email" name="email">
                     
-                    <label>Профессия (ID):</label>
+                    <label>Profession (ID):</label>
                     <input type="number" name="profession_id" required>
                     
-                    <button type="submit">Сохранить</button>
-                    <button type="button" onclick="closeModal()">Отмена</button>
+                    <button type="submit">Save</button>
+                    <button type="button" onclick="closeModal()">Cancel</button>
                 </form>
             </div>
         `;
@@ -613,36 +621,36 @@ function addRowHtml(tableName) {
         return `
             <div class="modal-content">
                 <span class="close" onclick="closeModal()">&times;</span>
-                <h2>➕ Добавление питомца</h2>
+                <h2>➕ Add pet</h2>
                 <form id="addRowForm">
-                    <label>Кличка:</label>
+                    <label>Name:</label>
                     <input type="text" name="name" required>
                     
-                    <label>Вид:</label>
+                    <label>View:</label>
                     <select name="view">
-                        <option value="cat">Кошка</option>
-                        <option value="dog">Собака</option>
-                        <option value="bird">Птица</option>
-                        <option value="other">Другое</option>
+                        <option value="cat">Cat</option>
+                        <option value="dog">Dog</option>
+                        <option value="bird">Bird</option>
+                        <option value="other">Other</option>
                     </select>
                     
-                    <label>Порода:</label>
+                    <label>Breed:</label>
                     <input type="text" name="Breed">
                     
-                    <label>Возраст:</label>
+                    <label>Age:</label>
                     <input type="number" name="Age">
                     
-                    <label>Вес:</label>
+                    <label>Waight:</label>
                     <input type="text" name="weight">
                     
-                    <label>Особые приметы:</label>
+                    <label>Special Marks:</label>
                     <textarea name="special_marks"></textarea>
                     
-                    <label>ID владельца:</label>
+                    <label>Owner ID:</label>
                     <input type="number" name="owner_id" required>
                     
-                    <button type="submit">Сохранить</button>
-                    <button type="button" onclick="closeModal()">Отмена</button>
+                    <button type="submit">Save</button>
+                    <button type="button" onclick="closeModal()">Cancel</button>
                 </form>
             </div>
         `;
@@ -652,29 +660,43 @@ function addRowHtml(tableName) {
         return `
             <div class="modal-content">
                 <span class="close" onclick="closeModal()">&times;</span>
-                <h2>➕ Добавление записи</h2>
+                <h2>➕ Add appointments</h2>
                 <form id="addRowForm">
-                    <label>Услуга:</label>
-                    <input type="text" name="specific_service" required>
-                    
-                    <label>Тип питомца:</label>
-                    <input type="text" name="pet_type">
-                    
-                    <label>Состояние:</label>
-                    <textarea name="specific_condition"></textarea>
-                    
-                    <label>Дата:</label>
-                    <input type="date" name="date" required>
-                    
-                    <label>Время:</label>
-                    <input type="time" name="time" required>
-                    
-                    <label>ID пользователя:</label>
-                    <input type="number" name="user_id" required>
-                    
-                    <button type="submit">Сохранить</button>
-                    <button type="button" onclick="closeModal()">Отмена</button>
-                </form>
+    <label>Pet name:</label>
+    <input type="text" name="pet_name" required>
+    
+    <label>Doctor Name:</label>
+    <input type="text" name="Doctor_Name" required>
+    
+    <label>Doctor Second Name:</label>
+    <input type="text" name="Doctor_second_name" required>
+    
+    <label>Service:</label>
+    <input type="text" name="Service" required>
+    
+    <label>Name (user):</label>
+    <input type="text" name="user_first_name" required>
+    
+    <label>Last name (user):</label>
+    <input type="text" name="user_second_name" required>
+    
+    <label>Status:</label>
+    <select name="status" required>
+        <option value="active">Active</option>
+        <option value="completed">Completed</option>
+        <option value="cancelled">Cancelled</option>
+        <option value="pending">Pending</option>
+    </select>
+    
+    <label>Date:</label>
+    <input type="date" name="date" required>
+    
+    <label>Time:</label>
+    <input type="time" name="time" required>
+    
+    <button type="submit">Save</button>
+    <button type="button" onclick="closeModal()">Cancel</button>
+</form>
             </div>
         `;
     }

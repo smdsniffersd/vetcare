@@ -221,7 +221,7 @@ tr:first-child {
 }
 
 .editModal {
-    display: block;
+    display: none;
     position: fixed;
     top: 50%;
     left: 50%;
@@ -234,4 +234,25 @@ tr:first-child {
 .editUserForm {
     display: flex;
     flex-direction: column;
+}
+
+.addRowButton {
+    border: 1px solid rgba(21, 21, 21, 0.1);
+    padding: 1vh 2vh;
+    border-radius: 14px;
+    position: fixed;
+    top: 10%;
+    right: 5vh;
+}
+#addRowForm,
+#editRowForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+}
+#addRowForm>:button,
+#editRowForm>button {
+    border: 1px solid rgba(21, 21, 21, 0.1);
+    padding: 1vh 2vh;
+    background-color: white;
 }

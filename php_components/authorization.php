@@ -11,7 +11,7 @@ header('Content-Type: application/json');
 session_start();
 
 
-require_once __DIR__. '/../config.php';
+require_once __DIR__ . '/../config.php';
 
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['phone'] = $user['phone'] ?? '';
         $_SESSION['email'] = $user['email'] ?? '';
         $_SESSION['userauth'] = true;
-        
+
         $log = [
             'userID' => $user['id'],
             'event' => 'authorization',
@@ -36,7 +36,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         error_log("Session saved: " . print_r($_SESSION, true));
         insertRow('logs', $log);
-        echo json_encode(['success' => true, 'message' => 'authorization']);
+
+        echo json_encode(['success' => true, 'message' => 'authorization', 'auth_role' => $user['role_id']]);
+        exit;
     } else {
         echo json_encode(['success' => false, 'message' => 'Неверный логин или пароль']);
     }

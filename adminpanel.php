@@ -33,7 +33,7 @@ if ($role_id['role_id'] === 1): ?>
 
     </header>
 
-    <body>
+    <body id="adminbody">
 
         <header>
             <ul class="headerUl">
@@ -89,10 +89,8 @@ if ($role_id['role_id'] === 1): ?>
 
         </div>
         <div id="editModal" class="editModal"></div>
-        <button onclick="addRow('users')">➕ Добавить пользователя</button>
-        <button onclick="addRow('personal')">➕ Добавить сотрудника</button>
-        <button onclick="addRow('pets')">➕ Добавить питомца</button>
-        <button onclick="addRow('appointments')">➕ Добавить запись</button>
+        
+
         <script src="./scripts/admin.js"></script>
     </body>
 
