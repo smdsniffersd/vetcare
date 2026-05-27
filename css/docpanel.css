@@ -1,6 +1,7 @@
-body{
+body {
     padding: 0%;
 }
+
 .menuNav {
     position: fixed;
     top: 20%;
@@ -34,18 +35,29 @@ body{
             /* конец среза слева сверху */
         );
 }
-.menuNavLi:hover{
+
+.menuNavLi:hover {
     cursor: pointer;
     transform: translateX(4vh);
 }
-#hiddenLi{
+
+#hiddenLi {
     display: none;
 }
-.logo_text{
+
+.logo_text {
     color: black;
 }
+
 .headerButtons>a,
 .headerButtons>div>a,
-.header_nav_ul>li>a{
+.header_nav_ul>li>a {
     font-weight: 300;
+}
+
+.addRowButton {
+    width: fit-content;
+    position: fixed;
+    top: 25%;
+    right: 5%;
 }

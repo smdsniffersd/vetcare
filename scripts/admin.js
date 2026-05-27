@@ -79,6 +79,26 @@ function getInfo(element) {
     }).catch(error => console.error('Fetch error', error));
 
 }
+
+async function getMedicines(cells) {
+    let medicines = [];
+    medicines = await fetch('./php_components/adminlogic.php', {
+        method: 'POST',
+        body: JSON.stringify({ action: 'getinfoMed', value: 'medicines' }),
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    }).then(response => response.json())
+        .then(data => data.data);
+
+    let medicineOptions = '';
+    medicines.forEach(medicine => {
+        const selected = (medicine.name === cells[3]?.textContent) ? 'selected' : '';
+        medicineOptions += `<option value="${medicine.id}" ${selected}>${medicine.name}</option>`;
+    });
+    return medicineOptions;
+}
 function overlayGetInfoPets(data) {
     const overlayGetInfoPets = document.getElementById('overlayGetInfoPets');
     const overlayGetInfoPetsFirst = document.getElementById('overlayGetInfoPetsFirst');
@@ -147,6 +167,9 @@ function showUserPets(id, a = true) {
 function closeOverlay() {
     const overlayGetInfoPets = document.getElementById('overlayGetInfoPets');
     overlayGetInfoPets.style.display = 'none';
+} function formatDateTime(dateTimeStr) {
+    if (!dateTimeStr) return '';
+    return dateTimeStr.replace(' ', 'T').slice(0, 16);
 }
 function overlayGetInfoPetsAddPet(id) {
     console.log('overlayGetInfoPetsAddPet', id);
@@ -241,7 +264,7 @@ function deleteUserOverlay(id) {
 
 }
 
-function editRow(elem, tableName) {
+async function editRow(elem, tableName) {
     const tr = elem.closest('tr');
     const cells = tr.querySelectorAll('td');
     const rowId = tr.dataset.id || cells[0].textContent;
@@ -249,47 +272,54 @@ function editRow(elem, tableName) {
     const editModal = document.getElementById('editModal');
     editModal.style.display = 'block';
 
-    const modalHtml = editRowHtml(tableName, cells, rowId);
+    // 👇 ДОБАВЬТЕ await
+    const modalHtml = await editRowHtml(tableName, cells, rowId);
     editModal.innerHTML = modalHtml;
 
-
-    document.getElementById('editRowForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const formData = new FormData(e.target);
-        const updatedData = {};
-
-        formData.forEach((value, key) => {
-            updatedData[key] = value;
-        });
-        updatedData.action = 'editRow';
-        updatedData.table = tableName;
-        updatedData.id = rowId;
-
-        try {
-            const response = await fetch('./php_components/adminlogic.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatedData)
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                updateRowCells(cells, tableName, updatedData);
-                closeModal();
-                alert('Запись обновлена');
-            } else {
-                alert('Ошибка: ' + result.message);
-            }
-        } catch (error) {
-            console.error('Ошибка:', error);
-            alert('Ошибка при сохранении');
+    setTimeout(() => {
+        const form = document.getElementById('editRowForm');
+        if (!form) {
+            console.error('Форма editRowForm не найдена', editModal.innerHTML);
+            return;
         }
-    });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const updatedData = {};
+
+            formData.forEach((value, key) => {
+                updatedData[key] = value;
+            });
+            updatedData.action = 'editRow';
+            updatedData.table = tableName;
+            updatedData.id = rowId;
+
+            try {
+                const response = await fetch('./php_components/adminlogic.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updatedData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    updateRowCells(cells, tableName, updatedData);
+                    closeModal();
+                    alert('Запись обновлена');
+                } else {
+                    alert('Ошибка: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Ошибка при сохранении');
+            }
+        });
+    }, 100);
 }
 
-function editRowHtml(tableName, cells, rowId) {
+async function editRowHtml(tableName, cells, rowId) {
     if (tableName === 'users') {
         return `
             <div class="modal-content">
@@ -415,6 +445,41 @@ function editRowHtml(tableName, cells, rowId) {
             </div>
         `;
     }
+    if (tableName === 'medication_reminders') {
+
+        const medicine = await getMedicines(cells[3]?.textContent);
+        console.log(medicine);
+        console.log(cells[3]?.textContent);
+
+        return `<div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Редактирование записи</h2>
+        <form id="editRowForm">
+            <label>ID:</label>
+            <input type="text" value="${rowId}" disabled>
+            
+            <label>Pet:</label>
+            <input type="text" value="${cells[1]?.textContent || ''}" disabled>
+            
+            <label>Date and Time:</label>
+            <input type="datet" name="scheduled_datetime" value="${formatDateTime(cells[2]?.textContent) || ''}" required>
+
+            <label>Medicine:</label>
+            <select name="medicine_id">
+                ${medicine}
+            </select>
+
+            <label>Status:</label>
+            <select name="is_taken">
+                <option value="0" ${cells[3]?.textContent === '0' ? 'selected' : ''}>Не принято</option>
+                <option value="1" ${cells[3]?.textContent === '1' ? 'selected' : ''}>Принято</option>
+            </select>
+            
+            <button type="submit">Save</button>
+            <button type="button" onclick="closeModal()">Cancel</button>
+        </form>
+    </div>`;
+    }
     return `
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
@@ -510,7 +575,7 @@ function deleteRow(elem, tableName) {
         });
 }
 
-function addRow(tableName) {
+async function addRow(tableName) {
     const editModal = document.getElementById('editModal');
     if (!editModal) {
         console.error('editModal не найден');
@@ -518,46 +583,49 @@ function addRow(tableName) {
     }
 
     editModal.style.display = 'block';
-    const modalHtml = addRowHtml(tableName);
+    const modalHtml = await addRowHtml(tableName);
     editModal.innerHTML = modalHtml;
+    setTimeout(async () => {
 
-    document.getElementById('addRowForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
 
-        const formData = new FormData(e.target);
-        const newData = {};
-        formData.forEach((value, key) => {
-            newData[key] = value;
-        });
-        newData.action = 'addRow';
-        newData.table = tableName;
+        await document.getElementById('addRowForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-        console.log('Отправляем данные:', newData);
-
-        try {
-            const response = await fetch('./php_components/adminlogic.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newData)
+            const formData = new FormData(e.target);
+            const newData = {};
+            formData.forEach((value, key) => {
+                newData[key] = value;
             });
+            newData.action = 'addRow';
+            newData.table = tableName;
 
-            const result = await response.json();
+            console.log('Отправляем данные:', newData);
 
-            if (result.success) {
-                alert('Запись добавлена');
-                closeModal();
-                loadTableData(tableName);
-            } else {
-                alert(' Ошибка: ' + result.message);
+            try {
+                const response = await fetch('./php_components/adminlogic.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('Запись добавлена');
+                    closeModal();
+                    loadTableData(tableName);
+                } else {
+                    alert(' Ошибка: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Ошибка при добавлении');
             }
-        } catch (error) {
-            console.error('Ошибка:', error);
-            alert('Ошибка при добавлении');
-        }
-    });
+        });
+    })
 }
 
-function addRowHtml(tableName) {
+async function addRowHtml(tableName) {
     if (tableName === 'users') {
         return `
             <div class="modal-content">
@@ -588,7 +656,6 @@ function addRowHtml(tableName) {
             </div>
         `;
     }
-
     if (tableName === 'personal') {
         return `
             <div class="modal-content">
@@ -700,7 +767,36 @@ function addRowHtml(tableName) {
             </div>
         `;
     }
+    if (tableName === 'medication_reminders') {
+        const medicineOptions = await getMedicines(0);
+        return `
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>➕ Add Prescriptions</h2>
+            <form id="addRowForm">
+                <label>Pet name</label>
+                <input type="text" name="pet_name" required>
 
+                <label>Scheduled date and time:</label>
+                <input type="datetime-local" name="scheduled_datetime" required>
+                
+                <label>Status:</label>
+                <select name="is_taken">
+                    <option value="0">Not Accepted</option>
+                    <option value="1">Accepted</option>
+                </select>
+                
+                <label>Medicine:</label>
+                <select name="medicine_id">
+                    ${medicineOptions}
+                </select>
+                
+                <button type="submit">Save</button>
+                <button type="button" onclick="closeModal()">Cancel</button>
+            </form>
+        </div>
+    `;
+    }
     return `
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>

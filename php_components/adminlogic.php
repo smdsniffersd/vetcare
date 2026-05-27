@@ -18,16 +18,17 @@ $sql = [
     'logs' => 'select id, userID, event, time from logs',
     'personal' => 'select p.id, p.first_name, p.second_name, p.phone_number, p.email, pr.name as profession_name from personal p left join professions pr ON pr.id = p.profession_id',
     'appointments' =>
-    'select a.id, p.name as pet_name, per.first_name as Doctor_Name, per.second_name as Doctor_second_name, s.name as Service, u.firstName as name, u.secondName as last_name, a.status, a.date, a.time, a.time_at from appointments a
+    'select a.id, p.name as pet_name, per.first_name as Dr_Name, per.second_name as Dr_second_name, s.name as Service, u.firstName as name, u.secondName as last_name, a.status, a.date, a.time, a.time_at from appointments a
     left join users u ON u.id = a.user_id
     left join pets p ON u.id = p.owner_id
     left join services s ON a.service_id = s.id
     left join personal per ON a.doctor_id = per.id
     ORDER BY a.date DESC, a.time DESC',
     'pets' => 'select p.id, p.name, p.view, p.Breed, p.Age, p.weight, p.special_marks, u.firstName as OwnerName, u.secondName as OwnerLastName from pets p left join users u ON p.owner_id = u.id',
-    'medication_reminders' => 'select mr.id, p.name as Pet_name, mr.scheduled_datetime, mr.is_taken, m.name as medicine from medication_reminders mr
+    'medication_reminders' => 'select mr.id, p.name as Pet_name, mr.scheduled_datetime as Scheduled_Date, mr.is_taken as Status, m.name as medicine from medication_reminders mr
     left join medicines m ON mr.medicine_id = m.id
-    left join pets p ON mr.pet_id = p.id'
+    left join pets p ON mr.pet_id = p.id',
+    'medicines' => 'select id, name from medicines'
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -128,6 +129,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 ];
             }
+            if ($table === 'medication_reminders') {
+                $pet_name = $input['pet_name'] ?? null;
+
+                if (empty($pet_name)) {
+                    echo json_encode(['success' => false, 'message' => 'Имя питомца обязательно']);
+                    return;
+                }
+
+                try {
+                    $pet = OneFetch('SELECT id FROM pets WHERE name = ?', [$pet_name]);
+
+                    if (!$pet) {
+                        echo json_encode(['success' => false, 'message' => 'Питомец с именем "' . $pet_name . '" не найден']);
+                        return;
+                    }
+
+                    $input = [
+                        'pet_id' => $pet['id'],
+                        'medicine_id' => $input['medicine_id'],
+                        'scheduled_datetime' => $input['scheduled_datetime'],
+                        'is_taken' => $input['is_taken'] ?? 0
+                    ];
+                } catch (Exception $e) {
+                    echo json_encode(['success' => false, 'message' => 'Ошибка БД: ' . $e->getMessage()]);
+                    return;
+                }
+            }
             try {
                 $id = insertRow($table, $input);
                 if ($id) {
@@ -135,6 +163,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 } else {
                     echo json_encode(['success' => false, 'message' => 'Ошибка при добавлении']);
                 }
+            } catch (Exception $e) {
+                echo json_encode(['success' => false, 'message' => 'Ошибка: ' . $e->getMessage()]);
+            }
+            break;
+        case 'getinfoMed':
+            $sqlQuestion = $sql[$table];
+            try {
+                $data = AllFetch($sqlQuestion);
+                echo json_encode(['success' => true, 'data' => $data]);
             } catch (Exception $e) {
                 echo json_encode(['success' => false, 'message' => 'Ошибка: ' . $e->getMessage()]);
             }
